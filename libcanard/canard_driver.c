@@ -412,7 +412,7 @@ uavcan_cmd_info canard_driver_last_rpmcmd(int can_if) {
  */
 static void calculateTotalCurrent(void) {
 	// Calculate total current being consumed by the ESCs on the system
-	float totalCurrent = mc_interface_get_tot_current();
+	float totalCurrent = mc_interface_get_tot_current_filtered();
 	float avgVoltage = mc_interface_get_input_voltage_filtered();
 	float totalSysCurrent = 0;
 

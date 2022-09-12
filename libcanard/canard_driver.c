@@ -401,7 +401,7 @@ static void sendNodeStatus(void) {
 static void sendEscStatus(void) {
 	uint8_t buffer[UAVCAN_EQUIPMENT_ESC_STATUS_MAX_SIZE];
 	uavcan_equipment_esc_Status status;
-	status.current = mc_interface_get_tot_current();
+	status.current = mc_interface_get_tot_current_filtered();
 	status.error_count = mc_interface_get_fault();
 	status.esc_index = app_get_configuration()->uavcan_esc_index;
 	status.power_rating_pct = (fabsf(mc_interface_get_tot_current()) /

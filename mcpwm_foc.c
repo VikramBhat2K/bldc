@@ -4613,20 +4613,40 @@ static void start_pwm_hw(volatile motor_all_state_t *motor) {
 	}
 }
 
+// Modified for custom changes to have time threshold for encoder mode
 static float correct_encoder(float obs_angle, float enc_angle, float speed,
 							 float sl_erpm, volatile motor_all_state_t *motor) {
+
+	static uint64_t encoder_use_counter = 0;
+	static uint64_t encoder_thresh = 25000; // Empirically determined cycle threshold before going back into 
+	static bool startup_mode = true; // Start in startup mode
 	float rpm_abs = fabsf(RADPS2RPM_f(speed));
 
 	// Hysteresis 5 % of total speed
 	float hyst = sl_erpm * 0.05;
 	if (motor->m_using_encoder) {
 		if (rpm_abs > (sl_erpm + hyst)) {
-			motor->m_using_encoder = false;
+			motor->m_using_encoder = false; // Exit startup mode , we have entered sensorless mode
+			startup_mode = false;
+			encoder_use_counter = 0;  // Reset encoder use counter to 0 (in encoder-less mode)
 		}
 	} else {
 		if (rpm_abs < (sl_erpm- hyst)) {
-			motor->m_using_encoder = true;
+			if (!startup_mode && (encoder_use_counter < encoder_thresh)){
+				encoder_use_counter += 1; // Increment and stay in encoder-less mode
+			}
+			else{
+				motor->m_using_encoder = true;
+			}
+			
 		}
+	}
+	if (motor->m_using_encoder)
+	{
+		ledpwm_led_on(LED_RED);
+	}
+	else{
+		ledpwm_led_off(LED_RED);
 	}
 
 	return motor->m_using_encoder ? enc_angle : obs_angle;

@@ -2789,7 +2789,8 @@ void mcpwm_foc_adc_int_handler(void *p, uint32_t flags) {
 							motor_now);
 				} else {
 					// Rotate the motor in open loop if the index isn't found.
-					motor_now->m_motor_state.phase = motor_now->m_phase_now_encoder_no_index;
+					// SWITCHED FROM m_phase_now_encoder_no_index to m_phase_now_observer 
+					motor_now->m_motor_state.phase = motor_now->m_phase_now_observer;
 				}
 
 				if (!motor_now->m_phase_override && motor_now->m_control_mode != CONTROL_MODE_OPENLOOP_PHASE) {

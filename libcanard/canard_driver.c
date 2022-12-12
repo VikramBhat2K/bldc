@@ -554,7 +554,7 @@ static void handle_esc_rpm_command(CanardInstance* ins, CanardRxTransfer* transf
 
 	if (uavcan_equipment_esc_RPMCommand_decode_internal(transfer, transfer->payload_len, &cmd, &tmp, 0) >= 0) {
 		if (cmd.rpm.len > app_get_configuration()->uavcan_esc_index) {
-			mc_interface_set_pid_speed(cmd.rpm.data[app_get_configuration()->uavcan_esc_index]);
+			mc_interface_set_pid_pos(cmd.rpm.data[app_get_configuration()->uavcan_esc_index]);
 			timeout_reset();
 		}
 	}

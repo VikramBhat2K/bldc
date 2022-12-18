@@ -542,7 +542,7 @@ static void handle_esc_raw_command(CanardInstance* ins, CanardRxTransfer* transf
 }
 
 /*
- * Handle ESC RPM command
+ * Handle ESC RPM command - REVISED TO BE INTERPRETED AS DUTY CYCLE
  */
 static void handle_esc_rpm_command(CanardInstance* ins, CanardRxTransfer* transfer) {
 	(void)ins;
@@ -554,8 +554,13 @@ static void handle_esc_rpm_command(CanardInstance* ins, CanardRxTransfer* transf
 
 	if (uavcan_equipment_esc_RPMCommand_decode_internal(transfer, transfer->payload_len, &cmd, &tmp, 0) >= 0) {
 		if (cmd.rpm.len > app_get_configuration()->uavcan_esc_index) {
-			mc_interface_set_pid_speed(cmd.rpm.data[app_get_configuration()->uavcan_esc_index]);
-			timeout_reset();
+			float input_duty = (float) (cmd.rpm.data[app_get_configuration()->uavcan_esc_index]);
+			if (input_duty < 100.0) // Only set if the input is less than 100. 
+			{
+				mc_interface_set_duty(input_duty / 100.0);
+				timeout_reset();
+			}
+			
 		}
 	}
 }

@@ -720,21 +720,9 @@ static void handle_esc_rpm_command(CanardInstance* ins, CanardRxTransfer* transf
 
 	if (uavcan_equipment_esc_RPMCommand_decode_internal(transfer, transfer->payload_len, &cmd, &tmp, 0) >= 0) {
 		if (cmd.rpm.len > app_get_configuration()->uavcan_esc_index) {
-			float rpm_val = cmd.rpm.data[app_get_configuration()->uavcan_esc_index];
-
-			if (ins == &canard_ins) {
-				can1_cmd.rpmtime = chVTGetSystemTimeX();
-				can1_cmd.rpmval = rpm_val;
-			}
-
-#ifdef HW_CAN2_DEV
-			if (ins == &canard_ins_if2) {
-				can2_cmd.rpmtime = chVTGetSystemTimeX();
-				can2_cmd.rpmval = rpm_val;
-			}
-#endif
-
-			mc_interface_set_pid_speed(rpm_val);
+			float raw_val = (((float)cmd.rpm.data[app_get_configuration()->uavcan_esc_index]) - 8192) / 8192.0;
+			mc_interface_set_current_rel(raw_val);
+			//mc_interface_set_pid_pos(cmd.rpm.data[app_get_configuration()->uavcan_esc_index]);
 			timeout_reset();
 		}
 	}

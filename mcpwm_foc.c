@@ -4414,14 +4414,15 @@ static void run_pid_control_pos(float dt, volatile motor_all_state_t *motor) {
 
 	if (encoder_is_configured()) {
 		if (encoder_index_found()) {
-			motor->m_iq_set = output * conf_now->l_current_max * conf_now->l_current_max_scale;;
+			motor->m_iq_set = 0.1 * conf_now->l_current_max * conf_now->l_current_max_scale;;
 		} else {
 			// Rotate the motor with 40 % power until the encoder index is found.
-			motor->m_iq_set = 0.4 * conf_now->l_current_max * conf_now->l_current_max_scale;;
+			motor->m_iq_set = 0;; // 0.1 * conf_now->l_current_max * conf_now->l_current_max_scale;;
 		}
 	} else {
-		motor->m_iq_set = output * conf_now->l_current_max * conf_now->l_current_max_scale;;
+		motor->m_iq_set = 0.3 * conf_now->l_current_max * conf_now->l_current_max_scale;;
 	}
+	// motor->m_iq_set = 0;;
 }
 
 static void run_pid_control_speed(float dt, volatile motor_all_state_t *motor) {

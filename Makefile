@@ -312,8 +312,8 @@ endif
 RULESPATH = $(CHIBIOS)/os/common/ports/ARMCMx/compilers/GCC
 include $(RULESPATH)/rules.mk
 
-build/$(PROJECT).bin: build/$(PROJECT).elf 
-	$(BIN) build/$(PROJECT).elf build/$(PROJECT).bin --gap-fill 0xFF
+build/$(PROJECT).bin: build/$(PROJECT).elf
+	$(BIN) build/$(PROJECT).elf /mnt/hgfs/'VM share'/VESC_CUSTOM_FIRMWARE.bin --gap-fill 0xFF
 
 # Program
 upload: build/$(PROJECT).bin

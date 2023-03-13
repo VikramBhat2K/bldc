@@ -3082,7 +3082,7 @@ void mcpwm_foc_adc_int_handler(void *p, uint32_t flags) {
 
 	// Track position control angle
 	float angle_now = 0.0;
-	if (encoder_is_configured() && encoder_index_found()) {
+	if (encoder_is_configured()) {
 		if (conf_now->m_sensor_port_mode == SENSOR_PORT_MODE_TS5700N8501_MULTITURN) {
 			angle_now = encoder_read_deg_multiturn();
 		} else {

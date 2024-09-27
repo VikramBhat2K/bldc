@@ -85,6 +85,12 @@ void terminal_process_string(char *str) {
 	} else if (strcmp(argv[0], "stop") == 0) {
 		mc_interface_set_duty(0);
 		commands_printf("Motor stopped\n");
+	} else if (strcmp(argv[0], "bad_pulses") == 0) {
+		uint16_t bad_pulses_count = encoder_bad_pulses();
+		commands_printf("Bad Pulses: %u\n", bad_pulses_count);
+	} else if (strcmp(argv[0], "max_bad_pulses") == 0) {
+		uint16_t max_bad_pulses_count = encoder_max_bad_pulses();
+		commands_printf("Max Bad Pulses: %u\n", max_bad_pulses_count);
 	} else if (strcmp(argv[0], "last_adc_duration") == 0) {
 		commands_printf("Latest ADC duration: %.4f ms", (double)(mcpwm_get_last_adc_isr_duration() * 1000.0));
 		commands_printf("Latest injected ADC duration: %.4f ms", (double)(mc_interface_get_last_inj_adc_isr_duration() * 1000.0));

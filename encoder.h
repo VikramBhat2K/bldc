@@ -38,6 +38,9 @@ void encoder_reset(void);
 void encoder_tim_isr(void);
 void encoder_set_counts(uint32_t counts);
 bool encoder_index_found(void);
+uint16_t encoder_bad_pulses(void);
+uint16_t encoder_max_bad_pulses(void);
+
 
 uint32_t encoder_spi_get_val(void);
 uint32_t encoder_spi_get_error_cnt(void);

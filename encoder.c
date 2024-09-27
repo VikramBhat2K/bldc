@@ -87,6 +87,8 @@ typedef enum {
 } encoder_mode;
 
 // Private variables
+static volatile uint16_t bad_pulses = 0; // Bad pulses variable that gets modified in Index Pulse ISR
+static volatile uint16_t max_bad_pulses = 0; // Variable to hold the maximum bad pulses we got so far
 static bool index_found = false;
 static uint32_t enc_counts = 10000;
 static encoder_mode mode = ENCODER_MODE_NONE;
@@ -596,7 +598,7 @@ void encoder_reset(void) {
 	__NOP();
 	if (palReadPad(HW_HALL_ENC_GPIO3, HW_HALL_ENC_PIN3)) {
 		const unsigned int cnt = HW_ENC_TIM->CNT;
-		static int bad_pulses = 0;
+		// static int bad_pulses = 0; Remove definition of bad pulses here so it can be used in other fns
 		const unsigned int lim = enc_counts / 20;
 
 		if (index_found) {
@@ -606,6 +608,9 @@ void encoder_reset(void) {
 				bad_pulses = 0;
 			} else {
 				bad_pulses++;
+				if (bad_pulses > max_bad_pulses){
+					max_bad_pulses = bad_pulses; // Variable for debugging
+				}
 
 				if (bad_pulses > 5) {
 					index_found = 0;
@@ -946,6 +951,27 @@ void encoder_set_counts(uint32_t counts) {
  */
 bool encoder_index_found(void) {
 	return index_found;
+}
+
+
+/**
+ * Check current number of bad index pulses.
+ *
+ * @return
+ * Current count of bad index pulses
+ */
+uint16_t encoder_bad_pulses(void) {
+	return bad_pulses;
+}
+
+/**
+ * Check current maximum number of bad index pulses.
+ *
+ * @return
+ * Maximum count of bad index pulses
+ */
+uint16_t encoder_max_bad_pulses(void) {
+	return max_bad_pulses;
 }
 
 // Software SPI
